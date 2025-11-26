@@ -2,6 +2,7 @@ import { StyleSheet } from "react-native";
 
 export default StyleSheet.create({
   container: {
+<<<<<<< HEAD
     // This style is no longer the main container but kept for reference
     flex: 1,
     backgroundColor: "#fff",
@@ -25,6 +26,12 @@ export default StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
+=======
+    flex: 1,
+    justifyContent: "center",
+    padding: 24,
+    backgroundColor: "#fff",
+>>>>>>> 00bfdbffc3ab7dc1ddf08509a364c3d5bfe8f7fa
   },
   title: {
     fontSize: 28,
@@ -39,6 +46,7 @@ export default StyleSheet.create({
     marginBottom: 18,
     borderRadius: 6,
     fontSize: 16,
+<<<<<<< HEAD
     backgroundColor: "#fff",
   },
 
@@ -100,12 +108,39 @@ export default StyleSheet.create({
   },
   roleField: {
     // Visual match for TextInput:
+=======
+  },
+  checkboxContainer: {
+    backgroundColor: "transparent",
+    borderWidth: 0,
+    marginLeft: 0,
+    marginBottom: 24,
+    width: 22,
+    height: 22,
+    borderWidth: 2,
+    borderColor: "#000",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 4,
+
+  checkIcon: {
+    fontSize: 20,       // ✔ big check mark
+    fontWeight: "bold",
+    color: "#000",
+    lineHeight: 22,     // ✔ ensures perfect vertical centering
+    textAlign: "center" // ✔ horizontal centering
+  },
+
+  },
+  roleField: {
+>>>>>>> 00bfdbffc3ab7dc1ddf08509a364c3d5bfe8f7fa
     borderWidth: 1,
     borderColor: "#ccc",
     padding: 12,
     marginBottom: 18,
     borderRadius: 6,
     fontSize: 16,
+<<<<<<< HEAD
     // Styling for non-editable appearance (matches glassmorphic theme):
     justifyContent: "center",
     // Subtle semi-transparent white background to indicate fixed value
@@ -124,6 +159,10 @@ export default StyleSheet.create({
     textDecorationLine: "underline", // Makes it look like a web link
     fontWeight: "500",
     textAlign: "center",
+=======
+    justifyContent: "center",
+    backgroundColor: "#f2f2f2",
+>>>>>>> 00bfdbffc3ab7dc1ddf08509a364c3d5bfe8f7fa
   },
   checkboxContainer: {
     flexDirection: "row",
@@ -133,11 +172,16 @@ export default StyleSheet.create({
   checkbox: {
     width: 20,
     height: 20,
+<<<<<<< HEAD
     borderWidth: 2,
+=======
+    borderWidth: 1,
+>>>>>>> 00bfdbffc3ab7dc1ddf08509a364c3d5bfe8f7fa
     borderColor: "#333",
     marginRight: 8,
     borderRadius: 4,
     backgroundColor: "#fff",
+<<<<<<< HEAD
     justifyContent: "center", // Vertical centering
     alignItems: "center",     // Horizontal centering
   },
@@ -150,9 +194,49 @@ export default StyleSheet.create({
     fontWeight: "bold",
     color: "#fff",     // Checkmark color white
     lineHeight: 18,   // Fix for vertical centering
+=======
+  },
+  checkboxChecked: {
+    backgroundColor: "#007bff",
+>>>>>>> 00bfdbffc3ab7dc1ddf08509a364c3d5bfe8f7fa
   },
   checkboxLabel: {
     fontSize: 16,
     color: "#222",
   },
+<<<<<<< HEAD
+=======
+  backButton: {
+    marginTop: 12,
+    textDecorationLine: "underline",
+    color: "#007bff",
+    fontFamily: "system-ui",
+    width: "fit-content",
+    textAlign: "center",
+    padding: 8,
+    marginLeft: "auto",
+    marginRight: "auto",
+  },
+
+  bg: {
+  flex: 1,
+  width: 40,
+  height: 40,
+  },
+
+  loginButton: {
+  backgroundColor: "#002365",  
+  paddingVertical: 12,
+  borderRadius: 8,
+  alignItems: "center",
+  marginTop: 20,
+  },
+
+  loginButtonText: {
+  color: "#fff",
+  fontSize: 16,
+  fontWeight: "bold",
+  },
+
+>>>>>>> 00bfdbffc3ab7dc1ddf08509a364c3d5bfe8f7fa
 });

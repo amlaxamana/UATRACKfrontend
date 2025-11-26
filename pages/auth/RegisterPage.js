@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+<<<<<<< HEAD
 import {
   View,
   Text,
@@ -10,6 +11,10 @@ import {
 // Import LinearGradient
 import { LinearGradient } from 'expo-linear-gradient';
 import styles from "../../styles/styles"; // Ensure this path is correct
+=======
+import { View, Text, TextInput, Button } from "react-native";
+import styles from "../../styles/styles"; // Adjust the path as needed
+>>>>>>> 00bfdbffc3ab7dc1ddf08509a364c3d5bfe8f7fa
 
 export default function RegisterPage({ navigation }) {
   const [firstName, setFirstName] = useState("");
@@ -19,6 +24,7 @@ export default function RegisterPage({ navigation }) {
   const [organization, setOrganization] = useState("");
   const role = "Student"; // default value
 
+<<<<<<< HEAD
   const handleRegister = () => {
     Alert.alert("Registration Attempt", `Name: ${firstName} ${lastName}\nEmail: ${email}\nOrganization: ${organization}\nRole: ${role}`);
     // Add actual registration logic here, e.g., API call
@@ -96,3 +102,54 @@ export default function RegisterPage({ navigation }) {
     </ImageBackground>
   );
 }
+=======
+  const handleRegister = () => {};
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.title}>Register</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="First Name"
+        value={firstName}
+        onChangeText={setFirstName}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Last Name"
+        value={lastName}
+        onChangeText={setLastName}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Email"
+        value={email}
+        onChangeText={setEmail}
+        autoCapitalize="none"
+        keyboardType="email-address"
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Password"
+        value={password}
+        onChangeText={setPassword}
+        secureTextEntry
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Organization"
+        value={organization}
+        onChangeText={setOrganization}
+      />
+      <View style={styles.roleField}>
+        <Text style={{ fontSize: 16, color: "#333" }}>{role}</Text>
+      </View>
+      <Button title="Register" onPress={handleRegister} />
+
+      <div style={styles.backButton} onClick={() => navigation.goBack()}>
+        Back to Login
+      </div>
+    </View>
+  );
+}
+>>>>>>> 00bfdbffc3ab7dc1ddf08509a364c3d5bfe8f7fa
