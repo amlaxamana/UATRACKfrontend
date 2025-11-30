@@ -7,11 +7,8 @@ import RegisterPage from "./pages/auth/RegisterPage";
 import DashboardPage from "./pages/dashboard/DashboardPage";
 import ReviewUserInfoPage from "./pages/auth/ReviewUserInfoPage";
 import AddForm from "./pages/dashboard/FormPage";
-<<<<<<< HEAD
 import EditFormPage from "./pages/dashboard/EditFormPage";
-=======
-import EditForm from "./pages/dashboard/EditFormPage";
->>>>>>> 3367a044a53f1840200b51c8264fc1da1275b816
+import EditUserInfoPage from "./pages/dashboard/EditUserInfoPage";
 
 const Stack = createNativeStackNavigator();
 
@@ -46,13 +43,14 @@ export default function Dashboard() {
         />
         <Stack.Screen
           name="EditForm"
-<<<<<<< HEAD
           component={EditFormPage}
-=======
-          component={EditForm}
->>>>>>> 3367a044a53f1840200b51c8264fc1da1275b816
           options={{ headerShown: false }}
         />
+        <Stack.Screen
+          name="EditUserInfoPage"
+          component={EditUserInfoPage}
+          options={{headerShown: false}}
+          />
       </Stack.Navigator>
     </NavigationContainer>
   );

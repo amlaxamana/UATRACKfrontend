@@ -37,9 +37,16 @@ export default function NavBar({ navigation }) {
     setIsMenuOpen(!isMenuOpen);
   };
 
-  const handleEditUser = () => {
-    navigation.navigate("EditForm");
-
+ const handleEditUser = () => {
+    setIsMenuOpen(false); // Close menu
+    console.log("Navigating to Edit User Info...");
+    
+    // ✅ UNCOMMENTED NAVIGATION CALL
+    if (navigation) {
+      navigation.navigate("EditUserInfoPage"); 
+    } else {
+      console.error("Navigation prop is missing on NavBar!");
+    }
   };
 
   // 🚀 MODIFIED: Logout function now clears AsyncStorage and resets navigation
