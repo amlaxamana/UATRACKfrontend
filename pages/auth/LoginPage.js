@@ -26,6 +26,7 @@ export default function LoginPage({ navigation }) {
       localStorage.setItem("email", response.data.email);
       localStorage.setItem("name", response.data.name);
       localStorage.setItem("organization", response.data.organization);
+      localStorage.setItem("office", response.data.office);
 
       navigation.navigate("Dashboard");
     } catch (error) {
