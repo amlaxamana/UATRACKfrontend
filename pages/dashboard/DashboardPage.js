@@ -12,6 +12,7 @@ import {
 import NavBar from "../componentsFolder/NavBar";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
 
@@ -21,8 +22,18 @@ import { colors } from "../../styles/colors"; // Moved the colors import up
 
 export default function DashboardPage({ navigation }) {
   // sample user role logic
-  const role = localStorage.getItem("role");
-  const name = localStorage.getItem("name");
+  const [name, setName] = useState("");
+  const [role, setRole] = useState("");
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const fetchRole = await AsyncStorage.getItem("role");
+      const fetchName = await AsyncStorage.getItem("name");
+      setName(fetchName);
+      setRole(fetchRole);
+    };
+    fetchUserData();
+  }, []);
 
   return (
     <View style={styles.container}>

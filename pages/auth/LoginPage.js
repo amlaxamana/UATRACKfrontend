@@ -58,6 +58,7 @@ export default function LoginPage({ navigation }) {
       await AsyncStorage.setItem("role", response.data.role.toString());
       await AsyncStorage.setItem("name", response.data.name);
       await AsyncStorage.setItem("organization", response.data.organization);
+      await AsyncStorage.setItem("office", response.data.office);
 
       if (rememberMe) {
         await AsyncStorage.setItem("isRemembered", "true");

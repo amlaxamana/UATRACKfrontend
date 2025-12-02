@@ -8,9 +8,23 @@ import {
   Platform,
 } from "react-native";
 import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function AddForm({ navigation }) {
-  const org = localStorage.getItem("organization");
+  const [org, setOrg] = useState("");
+  const [role, setRole] = useState("");
+  const [office, setOffice] = useState("");
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const fetchRole = await AsyncStorage.getItem("role");
+      const fetchOffice = await AsyncStorage.getItem("office");
+      const fetchOrg = await AsyncStorage.getItem("organization");
+      setRole(fetchRole);
+      setOffice(fetchOffice);
+      setOrg(fetchOrg);
+    };
+    fetchUserData();
+  }, []);
   const ORGANIZATION_CHOICES = [
     "UACSC",
     "INA",
@@ -35,8 +49,7 @@ export default function AddForm({ navigation }) {
     "UASAO",
     "SSITE",
   ];
-  const role = localStorage.getItem("role");
-  const office = localStorage.getItem("office");
+
   const [formData, setFormData] = useState({
     organization: org,
     event_name: "",

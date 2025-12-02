@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   StyleSheet,
 } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { colors } from "../../../styles/colors";
@@ -16,8 +17,15 @@ import { colors } from "../../../styles/colors";
 import Card from "./Card";
 
 export default function StudentDashboardPage({ navigation }) {
-  // sample user role logic
-  const organization = localStorage.getItem("organization");
+  const [organization, setOrganization] = useState("");
+
+  useEffect(() => {
+    const fetchOrganization = async () => {
+      const org = await AsyncStorage.getItem("organization");
+      setOrganization(org);
+    };
+    fetchOrganization();
+  }, []);
 
   const [filteredResponse, setFilteredResponse] = useState({ data: [] });
 

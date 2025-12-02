@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { colors } from "../../styles/colors";
 import { Picker } from "@react-native-picker/picker";
 
@@ -18,8 +19,20 @@ export default function EditFormPage({ navigation, route }) {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const routeData = route.params;
 
-  const role = localStorage.getItem("role");
-  const office = localStorage.getItem("office");
+  const [role, setRole] = useState("");
+  const [office, setOffice] = useState("");
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const fetchRole = await AsyncStorage.getItem("role");
+      const fetchOffice = await AsyncStorage.getItem("office");
+      setRole(fetchRole);
+      setOffice(fetchOffice);
+    };
+    fetchUserData();
+  }, []);
+
+  console.log("office:", office);
 
   const [fileName, setFileName] = useState("");
   const [selectedValue, setSelectedValue] = useState(null);
