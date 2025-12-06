@@ -76,33 +76,29 @@ export default function Card({
               Contact Person: {contactPerson}
             </Text>
             <Text style={styles.cardBodyText}>Event Date: {eventDate}</Text>
-            <Text>
-              Attached Document:{" "}
+            <View style={styles.attachRow}>
+              <Text style={styles.attachLabel}>Attached Document:</Text>
               {attachedDocument ? (
                 Platform.OS === "web" ? (
                   <span
                     onClick={() => handleDownload(documentName)}
                     style={{
-                      color: "blue",
+                      color: GLASS_THEME.lightBlue,
                       textDecoration: "underline",
                       cursor: "pointer",
+                      fontWeight: "600",
+                      marginLeft: 6,
                     }}
                   >
                     {documentNameOnly}
                   </span>
                 ) : (
                   <Pressable onPress={() => Linking.openURL(attachedDocument)}>
-                    <Text
-                      style={{ color: "blue", textDecorationLine: "underline" }}
-                    >
-                      {documentNameOnly}
-                    </Text>
+                    <Text style={styles.attachLink}>{documentNameOnly}</Text>
                   </Pressable>
                 )
-              ) : (
-                ""
-              )}
-            </Text>
+              ) : null}
+            </View>
             <Text style={styles.cardBodyText}>
               Overall Status: {statusOverall}
             </Text>
@@ -221,5 +217,22 @@ const styles = StyleSheet.create({
     color: "#001e66",
     fontSize: 16,
     fontWeight: "700",
+  },
+  attachRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  attachLabel: {
+    fontSize: Platform.OS === 'web' ? 17 : 16,
+    color: GLASS_THEME.glassText,
+    marginRight: 6,
+    fontWeight: '400',
+  },
+  attachLink: {
+    color: GLASS_THEME.lightBlue,
+    textDecorationLine: 'underline',
+    fontWeight: '400',
+    fontSize: Platform.OS === 'web' ? 17 : 16,
   },
 });

@@ -1,8 +1,19 @@
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Modal } from "react-native";
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, Modal, Platform, ScrollView } from "react-native";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage"; 
 import { colors } from "../../styles/colors";
+
+// --- GLASS THEME COLORS ---
+const GLASS_THEME = {
+  glassSurface: "rgba(255, 255, 255, 0.85)", // More opaque for readability
+  glassText: "#001e66", // Dark text on light glass
+  glassBorder: "rgba(0, 30, 102, 0.3)", // Dark blue border
+  darkBlue: "#005BCC",
+  lightBlue: "#007AFF",
+  white: "#FFFFFF",
+  softGray: "#E0E5F2",
+};
 
 export default function EditUserInfo({ navigation }) {
   const [formData, setFormData] = useState({
@@ -149,24 +160,26 @@ export default function EditUserInfo({ navigation }) {
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Edit Your Information</Text>
+    <ScrollView style={styles.scrollContainer}>
+      <View style={styles.container}>
+        <View style={styles.card}>
+          <Text style={styles.title}>Edit Your Information</Text>
 
-      <TextInput
+          <TextInput
         style={styles.input}
         placeholder="First Name"
         value={formData.first_name}
         onChangeText={(text) => handleChange("first_name", text)}
       />
 
-      <TextInput
+          <TextInput
         style={styles.input}
         placeholder="Last Name"
         value={formData.last_name}
         onChangeText={(text) => handleChange("last_name", text)}
       />
 
-      <TextInput
+          <TextInput
         style={styles.input}
         placeholder="Email"
         value={formData.email}
@@ -174,7 +187,7 @@ export default function EditUserInfo({ navigation }) {
         keyboardType="email-address"
       />
 
-      <TextInput
+          <TextInput
         style={styles.input}
         placeholder="New Password (optional)"
         value={formData.password}
@@ -182,13 +195,18 @@ export default function EditUserInfo({ navigation }) {
         secureTextEntry
       />
 
-      <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-        <Text style={styles.saveButtonText}>Save Changes</Text>
+          <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+        <View style={styles.saveButtonContent}>
+          <Text style={styles.saveButtonText}>Save Changes</Text>
+        </View>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-        <Text style={styles.backButtonText}>Go Back</Text>
+          <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+        <View style={styles.backButtonContent}>
+          <Text style={styles.backButtonText}>Go Back</Text>
+        </View>
       </TouchableOpacity>
+        </View>
 
       {/* MODAL */}
       <Modal transparent visible={modalVisible} animationType="fade">
@@ -197,73 +215,149 @@ export default function EditUserInfo({ navigation }) {
             <Text style={styles.modalText}>{modalMessage}</Text>
           </View>
         </View>
-      </Modal>
-    </View>
+        </Modal>
+      </View>
+    </ScrollView>
   );
 }
 
 // --- STYLES ---
 const styles = StyleSheet.create({
+  scrollContainer: {
+    backgroundColor: GLASS_THEME.softGray,
+  },
   container: {
-    padding: 20,
-    backgroundColor: "#fff",
-    flex: 1,
+    minHeight: "100vh",
+    backgroundColor: GLASS_THEME.softGray,
+    padding: Platform.OS === 'web' ? 40 : 20,
+    paddingBottom: 60,
+    alignItems: 'center',
+  },
+  // Card container styled similar to `loginCard` but with glass surface
+  card: {
+    width: "100%",
+    maxWidth: 500,
+    backgroundColor: GLASS_THEME.glassSurface, // exact 0.85 opacity
+    padding: 30,
+    borderRadius: 16,
+    borderWidth: 2,
+    borderColor: GLASS_THEME.glassBorder,
+    marginTop: 20,
+    alignItems: "center",
+    ...(Platform.OS === 'web' && { backdropFilter: 'blur(10px)' }),
+    shadowColor: GLASS_THEME.darkBlue,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 10,
+    elevation: 8,
   },
   title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 20,
-    color: colors.primary,
+    fontSize: 28,
+    fontWeight: "700",
+    marginBottom: 30,
+    color: GLASS_THEME.glassText,
+    letterSpacing: 0.5,
+    textAlign: 'center',
   },
   input: {
-    height: 50,
-    borderColor: "#ccc",
-    borderWidth: 1,
-    borderRadius: 8,
-    marginBottom: 15,
-    paddingHorizontal: 15,
-    backgroundColor: "#fff",
+    borderWidth: 2,
+    borderColor: GLASS_THEME.glassBorder,
+    marginVertical: 10,
+    padding: 14,
+    paddingHorizontal: 16,
+    borderRadius: 12,
+    backgroundColor: GLASS_THEME.glassSurface,
+    color: GLASS_THEME.glassText,
+    fontSize: 16,
+    fontWeight: "500",
+    ...(Platform.OS === 'web' && { backdropFilter: 'blur(5px)' }),
+    width: "100%",
+    minWidth: 250,
+    maxWidth: 440,
   },
   saveButton: {
-    backgroundColor: colors.primary,
-    padding: 15,
-    borderRadius: 10,
+    marginVertical: 20,
     marginBottom: 10,
+    width: "100%",
+    maxWidth: 440,
+  },
+  saveButtonContent: {
+    flex: 1,
+    paddingVertical: 14,
+    paddingHorizontal: 20,
+    borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: GLASS_THEME.lightBlue,
+    shadowColor: "#001e66",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 5,
   },
   saveButtonText: {
-    color: "#fff",
+    color: GLASS_THEME.white,
     textAlign: "center",
-    fontWeight: "bold",
+    fontWeight: "700",
+    fontSize: 16,
+    letterSpacing: 0.5,
   },
   backButton: {
-    padding: 15,
-    borderRadius: 10,
-    backgroundColor: colors.secondary,
+    marginVertical: 10,
+    marginBottom: 10,
+    width: "100%",
+    maxWidth: 440,
+  },
+  backButtonContent: {
+    flex: 1,
+    paddingVertical: 14,
+    paddingHorizontal: 20,
+    borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#ffd800",
+    borderWidth: 0,
+    shadowColor: "#001e66",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 5,
   },
   backButtonText: {
     textAlign: "center",
-    fontWeight: "bold",
-    color: "#fff",
+    fontWeight: "700",
+    color: GLASS_THEME.glassText,
+    fontSize: 16,
+    letterSpacing: 0.5,
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.45)",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
     justifyContent: "center",
     alignItems: "center",
   },
   modalBox: {
-    backgroundColor: "#fff",
-    padding: 20,
-    borderRadius: 12,
+    backgroundColor: GLASS_THEME.glassSurface,
+    padding: 24,
+    borderRadius: 20,
     minWidth: "70%",
+    maxWidth: 400,
     alignItems: "center",
+    borderWidth: 2,
+    borderColor: GLASS_THEME.glassBorder,
+    ...(Platform.OS === 'web' && { backdropFilter: 'blur(10px)' }),
+    shadowColor: GLASS_THEME.darkBlue,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
     elevation: 5,
   },
   modalText: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: "#333",
+    fontSize: 16,
+    fontWeight: "700",
+    color: GLASS_THEME.glassText,
     textAlign: "center",
+    letterSpacing: 0.3,
   },
 });
   
