@@ -7,12 +7,25 @@ import {
   Platform,
   Modal,
   Pressable,
+  TouchableOpacity,
+  ScrollView,
 } from "react-native";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { colors } from "../../styles/colors";
 import { Picker } from "@react-native-picker/picker";
+
+// --- GLASS THEME COLORS ---
+const GLASS_THEME = {
+  glassSurface: "rgba(255, 255, 255, 0.85)", // More opaque for readability
+  glassText: "#001e66", // Dark text on light glass
+  glassBorder: "rgba(0, 30, 102, 0.3)", // Dark blue border
+  darkBlue: "#005BCC",
+  lightBlue: "#007AFF",
+  white: "#FFFFFF",
+  softGray: "#E0E5F2",
+};
 
 export default function EditFormPage({ navigation, route }) {
   // State for delete confirmation modal
@@ -181,7 +194,8 @@ export default function EditFormPage({ navigation, route }) {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.scrollContainer}>
+      <View style={styles.container}>
       {/* Delete Confirmation Modal (only for admin) */}
       {role === "admin" && (
         <Modal
@@ -262,7 +276,7 @@ export default function EditFormPage({ navigation, route }) {
       <View style={styles.filePickerSection}>
         {Platform.OS === "web" ? (
           <div>
-            <Text style={{ marginBottom: 5, fontWeight: "bold" }}>
+            <Text style={styles.statusLabel}>
               Attach Document:
             </Text>
             <input type="file" onChange={handleWebFileChange} />
@@ -282,10 +296,10 @@ export default function EditFormPage({ navigation, route }) {
       {/* Conditional fields for admin and office */}
       {role === "admin" && office === "OSA" && (
         <>
-          <Text style={{ fontWeight: "bold", marginTop: 10 }}>Status OSA:</Text>
+          <Text style={styles.statusLabel}>Status OSA:</Text>
           {Platform.OS === "web" ? (
             <select
-              style={{ ...styles.webDateInput, marginBottom: 10 }}
+              style={styles.selectInput}
               value={editData.status_osa}
               onChange={(e) => handleChange("status_osa", e.target.value)}
             >
@@ -313,12 +327,12 @@ export default function EditFormPage({ navigation, route }) {
       )}
       {role === "admin" && office === "VPAA" && (
         <>
-          <Text style={{ fontWeight: "bold", marginTop: 10 }}>
+          <Text style={styles.statusLabel}>
             Status VPAA:
           </Text>
           {Platform.OS === "web" ? (
             <select
-              style={{ ...styles.webDateInput, marginBottom: 10 }}
+              style={styles.selectInput}
               value={editData.status_vpaa}
               onChange={(e) => handleChange("status_vpaa", e.target.value)}
             >
@@ -346,12 +360,12 @@ export default function EditFormPage({ navigation, route }) {
       )}
       {role === "admin" && office === "FINANCE" && (
         <>
-          <Text style={{ fontWeight: "bold", marginTop: 10 }}>
+          <Text style={styles.statusLabel}>
             Status FINANCE:
           </Text>
           {Platform.OS === "web" ? (
             <select
-              style={{ ...styles.webDateInput, marginBottom: 10 }}
+              style={styles.selectInput}
               value={editData.status_finance}
               onChange={(e) => handleChange("status_finance", e.target.value)}
             >
@@ -379,10 +393,10 @@ export default function EditFormPage({ navigation, route }) {
       )}
       {role === "admin" && office === "VPA" && (
         <>
-          <Text style={{ fontWeight: "bold", marginTop: 10 }}>Status VPA:</Text>
+          <Text style={styles.statusLabel}>Status VPA:</Text>
           {Platform.OS === "web" ? (
             <select
-              style={{ ...styles.webDateInput, marginBottom: 10 }}
+              style={styles.selectInput}
               value={editData.status_vpa}
               onChange={(e) => handleChange("status_vpa", e.target.value)}
             >
@@ -424,69 +438,212 @@ export default function EditFormPage({ navigation, route }) {
         />
       )}
       {/* Go Back Button */}
-      <View style={{ marginVertical: 10, flexDirection: "row", gap: 10 }}>
-        <Button title="Go Back" onPress={() => navigation.goBack()} />
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity
+          style={[styles.button, styles.yellowButton]}
+          onPress={() => navigation.goBack()}
+        >
+          <Text style={styles.buttonText}>Go Back</Text>
+        </TouchableOpacity>
         {role === "admin" && (
-          <Button
-            title="Delete"
-            color="#E53935"
+          <TouchableOpacity
+            style={[styles.button, styles.deleteButton]}
             onPress={() => setShowDeleteConfirm(true)}
-          />
+          >
+            <Text style={[styles.buttonText, { color: GLASS_THEME.white }]}>Delete</Text>
+          </TouchableOpacity>
         )}
       </View>
 
       {/* Save Button */}
-      <View style={{ marginVertical: 20 }}>
-        <Button title="Save" onPress={putData} />
+      <View style={styles.saveButtonContainer}>
+        <TouchableOpacity
+          style={[styles.button, styles.primaryButton]}
+          onPress={putData}
+        >
+          <Text style={[styles.buttonText, { color: GLASS_THEME.white }]}>Save Changes</Text>
+        </TouchableOpacity>
       </View>
-    </View>
+      </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { height: "100vh", backgroundColor: colors.surface, padding: 20 },
+  scrollContainer: {
+    backgroundColor: GLASS_THEME.softGray,
+  },
+  container: {
+    minHeight: "100vh",
+    backgroundColor: GLASS_THEME.softGray,
+    padding: Platform.OS === 'web' ? 40 : 20,
+    paddingBottom: 60,
+  },
   input: {
-    borderWidth: 1,
-    borderColor: "#ccc",
+    borderWidth: 2,
+    borderColor: GLASS_THEME.glassBorder,
     marginVertical: 10,
-    padding: 10,
-    borderRadius: 6,
+    padding: 14,
+    paddingHorizontal: 16,
+    borderRadius: 12,
+    backgroundColor: GLASS_THEME.glassSurface,
+    color: GLASS_THEME.glassText,
+    fontSize: 16,
+    fontWeight: "500",
+    ...(Platform.OS === 'web' && { backdropFilter: 'blur(5px)' }),
   },
-  datePickerContainer: { marginVertical: 10 },
-  datePickerLabel: { marginBottom: 5, fontWeight: "600" },
+  datePickerContainer: {
+    marginVertical: 12,
+    padding: 16,
+    borderWidth: 2,
+    borderColor: GLASS_THEME.glassBorder,
+    borderRadius: 12,
+    backgroundColor: GLASS_THEME.glassSurface,
+    ...(Platform.OS === 'web' && { backdropFilter: 'blur(5px)' }),
+  },
+  datePickerLabel: {
+    marginBottom: 10,
+    fontWeight: "700",
+    color: GLASS_THEME.glassText,
+    fontSize: 16,
+    letterSpacing: 0.3,
+  },
   webDateInput: {
-    padding: 8,
-    borderWidth: 1,
-    borderColor: "#aaa",
-    borderRadius: 6,
+    padding: 12,
+    borderWidth: 2,
+    borderColor: GLASS_THEME.glassBorder,
+    borderRadius: 10,
+    backgroundColor: GLASS_THEME.white,
+    color: GLASS_THEME.glassText,
+    fontSize: 16,
+    fontWeight: "500",
   },
-  filePickerSection: { marginVertical: 20 },
-  fileNameText: { marginTop: 8, color: "#444" },
+  filePickerSection: {
+    marginVertical: 20,
+    padding: 16,
+    borderWidth: 2,
+    borderColor: GLASS_THEME.glassBorder,
+    borderRadius: 12,
+    backgroundColor: GLASS_THEME.glassSurface,
+    ...(Platform.OS === 'web' && { backdropFilter: 'blur(5px)' }),
+  },
+  fileNameText: {
+    marginTop: 12,
+    color: GLASS_THEME.glassText,
+    fontSize: 14,
+    fontWeight: "500",
+  },
+  statusLabel: {
+    fontWeight: "700",
+    marginTop: 20,
+    marginBottom: 10,
+    color: GLASS_THEME.glassText,
+    fontSize: 16,
+    letterSpacing: 0.3,
+  },
+  selectInput: {
+    padding: 14,
+    paddingHorizontal: 16,
+    borderWidth: 2,
+    borderColor: GLASS_THEME.glassBorder,
+    borderRadius: 12,
+    backgroundColor: GLASS_THEME.glassSurface,
+    color: GLASS_THEME.glassText,
+    fontSize: 16,
+    fontWeight: "500",
+    marginBottom: 10,
+    cursor: 'pointer',
+    transition: 'all 0.3s ease',
+  },
+  buttonContainer: {
+    marginVertical: 10,
+    flexDirection: "row",
+    gap: 10,
+  },
+  saveButtonContainer: {
+    marginVertical: 20,
+    marginBottom: 40,
+  },
+  button: {
+    flex: 1,
+    paddingVertical: 14,
+    paddingHorizontal: 20,
+    borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "#001e66",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 5,
+  },
+  primaryButton: {
+    backgroundColor: GLASS_THEME.lightBlue,
+    borderWidth: 0,
+  },
+  secondaryButton: {
+    backgroundColor: GLASS_THEME.glassSurface,
+    borderWidth: 2,
+    borderColor: GLASS_THEME.glassBorder,
+  },
+  yellowButton: {
+    backgroundColor: "#ffd800",
+    borderWidth: 0,
+  },
+  deleteButton: {
+    backgroundColor: "#cf1a24",
+    borderWidth: 0,
+  },
+  buttonText: {
+    fontSize: 16,
+    fontWeight: "700",
+    letterSpacing: 0.5,
+    color: GLASS_THEME.glassText,
+  },
   modalOverlay: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.5)",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
     justifyContent: "center",
     alignItems: "center",
   },
   modalContent: {
-    backgroundColor: "white",
-    padding: 20,
-    borderRadius: 10,
+    backgroundColor: GLASS_THEME.glassSurface,
+    padding: 24,
+    borderRadius: 20,
     width: "80%",
-    maxWidth: 350,
+    maxWidth: 400,
     alignItems: "center",
+    borderWidth: 2,
+    borderColor: GLASS_THEME.glassBorder,
+    ...(Platform.OS === 'web' && { backdropFilter: 'blur(10px)' }),
+    shadowColor: GLASS_THEME.darkBlue,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 5,
   },
   modalText: {
     fontSize: 16,
     fontWeight: "bold",
     marginBottom: 15,
     textAlign: "center",
+    color: GLASS_THEME.glassText,
   },
   modalButton: {
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 6,
-    backgroundColor: "#1976D2",
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 10,
+    backgroundColor: GLASS_THEME.lightBlue,
+    marginTop: 10,
+    shadowColor: GLASS_THEME.lightBlue,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.4,
+    shadowRadius: 8,
+    elevation: 8,
   },
-  modalButtonText: { color: "white", fontWeight: "600" },
+  modalButtonText: {
+    color: GLASS_THEME.white,
+    fontWeight: "600",
+    fontSize: 16,
+  },
 });
