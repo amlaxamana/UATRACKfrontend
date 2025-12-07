@@ -43,6 +43,17 @@ export default function Card({
   // If you want to show the name without extension, uncomment below:
   let documentNameOnly = documentName.split(".").shift();
 
+  // Format document name: if too long, show first word capitalized + ' ....'
+  const formatDocumentName = (name, maxLength = 12) => {
+    if (!name) return "";
+    // If name is short enough, return as-is
+    if (name.length <= maxLength) return name;
+    const firstWord = name.split(" ")[0] || name;
+    const formatted =
+      firstWord.charAt(0).toUpperCase() + firstWord.slice(1).toLowerCase();
+    return formatted + " ....";
+  };
+
   const statusColor = [
     statusOverall == "Pending"
       ? { color: "#9c7815ff" }
@@ -95,19 +106,33 @@ export default function Card({
                 Platform.OS === "web" ? (
                   <span
                     onClick={() => handleDownload(documentName)}
+                    title={documentNameOnly}
                     style={{
                       color: GLASS_THEME.lightBlue,
                       textDecoration: "underline",
                       cursor: "pointer",
                       fontWeight: "600",
                       marginLeft: 6,
+                      display: "inline-block",
+                      maxWidth: 220,
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      verticalAlign: "bottom",
                     }}
                   >
-                    {documentNameOnly}
+                    {formatDocumentName(documentNameOnly)}
                   </span>
                 ) : (
                   <Pressable onPress={() => Linking.openURL(attachedDocument)}>
-                    <Text style={styles.attachLink}>{documentNameOnly}</Text>
+                    <Text
+                      style={styles.attachLink}
+                      accessibilityLabel={documentNameOnly}
+                      numberOfLines={1}
+                      ellipsizeMode="tail"
+                    >
+                      {formatDocumentName(documentNameOnly)}
+                    </Text>
                   </Pressable>
                 )
               ) : null}
