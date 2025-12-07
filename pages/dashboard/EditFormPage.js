@@ -15,6 +15,7 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { colors } from "../../styles/colors";
 import { Picker } from "@react-native-picker/picker";
+import * as DocumentPicker from "expo-document-picker";
 
 // --- GLASS THEME COLORS ---
 const GLASS_THEME = {
@@ -136,6 +137,33 @@ export default function EditFormPage({ navigation, route }) {
     }
   };
 
+  const handleMobilePickDocument = async () => {
+    try {
+      const result = await DocumentPicker.getDocumentAsync({
+        type: "*/*",
+        copyToCacheDirectory: true,
+        multiple: false,
+      });
+
+      if (result.canceled) return;
+
+      const asset = Array.isArray(result.assets) ? result.assets[0] : result;
+      const picked = {
+        uri: asset.uri,
+        name: asset.name || "document",
+        type: asset.mimeType || asset.type || "application/octet-stream",
+      };
+
+      setEditData({ ...editData, attach_document: picked });
+      setFileName(picked.name);
+    } catch (e) {
+      console.error("Document pick error", e);
+      setModalMessage("Failed to pick document.");
+      setModalVisible(true);
+      setTimeout(() => setModalVisible(false), 2000);
+    }
+  };
+
   // Submit edited data (partial update) with proper change detection
   // Delete function for admin
   const handleDelete = async () => {
@@ -172,8 +200,27 @@ export default function EditFormPage({ navigation, route }) {
     try {
       const formData = new FormData();
       Object.keys(editData).forEach((key) => {
-        if (editData[key] !== null) formData.append(key, editData[key]);
+        if (key !== "attach_document") {
+          if (editData[key] !== null) formData.append(key, editData[key]);
+        }
       });
+
+      if (editData.attach_document) {
+        if (Platform.OS === "web") {
+          formData.append(
+            "attach_document",
+            editData.attach_document,
+            editData.attach_document.name
+          );
+        } else {
+          const fileObj = {
+            uri: editData.attach_document.uri,
+            name: editData.attach_document.name,
+            type: editData.attach_document.type || "application/octet-stream",
+          };
+          formData.append("attach_document", fileObj);
+        }
+      }
 
       await axios.put(
         `http://127.0.0.1:8000/api/Events/${routeData.id}/`,
@@ -282,10 +329,15 @@ export default function EditFormPage({ navigation, route }) {
             <input type="file" onChange={handleWebFileChange} />
           </div>
         ) : (
-          <Button
-            title="Select Document (Mobile)"
-            onPress={() => alert("Use DocumentPicker for Mobile")}
-          />
+          <View>
+            <Text style={styles.statusLabel}>Attach Document:</Text>
+            <TouchableOpacity
+              style={[styles.button, styles.secondaryButton]}
+              onPress={handleMobilePickDocument}
+            >
+              <Text style={styles.buttonText}>Select Document (Mobile)</Text>
+            </TouchableOpacity>
+          </View>
         )}
 
         <Text style={styles.fileNameText}>

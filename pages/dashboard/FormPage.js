@@ -14,6 +14,7 @@ import {
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect } from "react";
+import * as DocumentPicker from "expo-document-picker";
 
 // --- GLASS THEME COLORS ---
 const GLASS_THEME = {
@@ -106,6 +107,36 @@ export default function AddForm({ navigation }) {
     }
   };
 
+  const handleMobilePickDocument = async () => {
+    setErrorMessage("");
+    try {
+      const result = await DocumentPicker.getDocumentAsync({
+        type: "*/*",
+        copyToCacheDirectory: true,
+        multiple: false,
+      });
+
+      if (result.canceled) {
+        return;
+      }
+
+      // New API returns assets array; older returns single object
+      const asset = Array.isArray(result.assets) ? result.assets[0] : result;
+
+      const picked = {
+        uri: asset.uri,
+        name: asset.name || "document",
+        type: asset.mimeType || asset.type || "application/octet-stream",
+      };
+
+      setFormData({ ...formData, attach_document: picked });
+      setFileName(picked.name);
+    } catch (e) {
+      console.error("Document pick error", e);
+      setErrorMessage("Failed to pick document. Please try again.");
+    }
+  };
+
   const handleSubmit = async () => {
     setErrorMessage("");
     if (role === "student"){
@@ -125,11 +156,20 @@ export default function AddForm({ navigation }) {
       }
     }
 
-    data.append(
-      "attach_document",
-      formData.attach_document,
-      formData.attach_document.name
-    );
+    if (Platform.OS === "web") {
+      data.append(
+        "attach_document",
+        formData.attach_document,
+        formData.attach_document.name
+      );
+    } else {
+      const fileObj = {
+        uri: formData.attach_document.uri,
+        name: formData.attach_document.name,
+        type: formData.attach_document.type || "application/octet-stream",
+      };
+      data.append("attach_document", fileObj);
+    }
 
     try {
       const response = await axios.post(
@@ -239,12 +279,11 @@ export default function AddForm({ navigation }) {
             />
           </View>
         ) : (
-          // Placeholder for native file selection (needs react-native-document-picker)
           <View>
-            <Button
-              title="Select Document (Mobile)"
-              onPress={() => alert("Use DocumentPicker for Mobile")}
-            />
+            <Text style={styles.statusLabel}>Attach Document:</Text>
+            <TouchableOpacity style={[styles.button, styles.secondaryButton]} onPress={handleMobilePickDocument}>
+              <Text style={styles.buttonText}>Select Document (Mobile)</Text>
+            </TouchableOpacity>
           </View>
         )}
 
