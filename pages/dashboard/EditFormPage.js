@@ -125,17 +125,7 @@ export default function EditFormPage({ navigation, route }) {
     if (routeData?.id) fetchEvent();
   }, [routeData?.id]);
 
-  // Handle file input on Web
-  const handleWebFileChange = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      setEditData({ ...editData, attach_document: file });
-      setFileName(file.name);
-    } else {
-      setEditData({ ...editData, attach_document: null });
-      setFileName("");
-    }
-  };
+  // Using DocumentPicker for all platforms (expo supports web too).
 
   const handleMobilePickDocument = async () => {
     try {
@@ -302,43 +292,25 @@ export default function EditFormPage({ navigation, route }) {
       {/* Date Input */}
       <View style={styles.datePickerContainer}>
         <Text style={styles.datePickerLabel}>Event Date (YYYY-MM-DD):</Text>
-        {Platform.OS === "web" ? (
-          <input
-            type="date"
-            value={editData.event_date}
-            onChange={(e) => handleChange("event_date", e.target.value)}
-            style={styles.webDateInput}
-          />
-        ) : (
-          <TextInput
-            style={styles.input}
-            placeholder="e.g., 2024-12-31"
-            value={editData.event_date}
-            onChangeText={(text) => handleChange("event_date", text)}
-          />
-        )}
+        <TextInput
+          style={styles.input}
+          placeholder="e.g., 2024-12-31"
+          value={editData.event_date}
+          onChangeText={(text) => handleChange("event_date", text)}
+        />
       </View>
 
       {/* File Upload */}
       <View style={styles.filePickerSection}>
-        {Platform.OS === "web" ? (
-          <div>
-            <Text style={styles.statusLabel}>
-              Attach Document:
-            </Text>
-            <input type="file" onChange={handleWebFileChange} />
-          </div>
-        ) : (
-          <View>
-            <Text style={styles.statusLabel}>Attach Document:</Text>
-            <TouchableOpacity
-              style={[styles.button, styles.secondaryButton]}
-              onPress={handleMobilePickDocument}
-            >
-              <Text style={styles.buttonText}>Select Document (Mobile)</Text>
-            </TouchableOpacity>
-          </View>
-        )}
+        <View>
+          <Text style={styles.statusLabel}>Attach Document:</Text>
+          <TouchableOpacity
+            style={[styles.button, styles.secondaryButton]}
+            onPress={handleMobilePickDocument}
+          >
+            <Text style={styles.buttonText}>Select Document</Text>
+          </TouchableOpacity>
+        </View>
 
         <Text style={styles.fileNameText}>
           {fileName ? `File selected: ${fileName}` : "No file selected."}
@@ -349,26 +321,14 @@ export default function EditFormPage({ navigation, route }) {
       {role === "admin" && office === "OSA" && (
         <>
           <Text style={styles.statusLabel}>Status OSA:</Text>
-          {Platform.OS === "web" ? (
-            <select
-              style={styles.selectInput}
-              value={editData.status_osa}
-              onChange={(e) => handleChange("status_osa", e.target.value)}
-            >
-              <option value="NS">Not Started</option>
-              <option value="IP">In Progress</option>
-              <option value="C">Completed</option>
-            </select>
-          ) : (
-            <Picker
-              selectedValue={editData.status_osa}
-              onValueChange={(value) => handleChange("status_osa", value)}
-            >
-              <Picker.Item label="Not Started" value="NS" />
-              <Picker.Item label="In Progress" value="IP" />
-              <Picker.Item label="Completed" value="C" />
-            </Picker>
-          )}
+          <Picker
+            selectedValue={editData.status_osa}
+            onValueChange={(value) => handleChange("status_osa", value)}
+          >
+            <Picker.Item label="Not Started" value="NS" />
+            <Picker.Item label="In Progress" value="IP" />
+            <Picker.Item label="Completed" value="C" />
+          </Picker>
           <TextInput
             style={styles.input}
             placeholder="OSA Note"
@@ -382,26 +342,14 @@ export default function EditFormPage({ navigation, route }) {
           <Text style={styles.statusLabel}>
             Status VPAA:
           </Text>
-          {Platform.OS === "web" ? (
-            <select
-              style={styles.selectInput}
-              value={editData.status_vpaa}
-              onChange={(e) => handleChange("status_vpaa", e.target.value)}
-            >
-              <option value="NS">Not Started</option>
-              <option value="IP">In Progress</option>
-              <option value="C">Completed</option>
-            </select>
-          ) : (
-            <Picker
-              selectedValue={editData.status_vpaa}
-              onValueChange={(value) => handleChange("status_vpaa", value)}
-            >
-              <Picker.Item label="Not Started" value="NS" />
-              <Picker.Item label="In Progress" value="IP" />
-              <Picker.Item label="Completed" value="C" />
-            </Picker>
-          )}
+          <Picker
+            selectedValue={editData.status_vpaa}
+            onValueChange={(value) => handleChange("status_vpaa", value)}
+          >
+            <Picker.Item label="Not Started" value="NS" />
+            <Picker.Item label="In Progress" value="IP" />
+            <Picker.Item label="Completed" value="C" />
+          </Picker>
           <TextInput
             style={styles.input}
             placeholder="VPAA Note"
@@ -415,26 +363,14 @@ export default function EditFormPage({ navigation, route }) {
           <Text style={styles.statusLabel}>
             Status FINANCE:
           </Text>
-          {Platform.OS === "web" ? (
-            <select
-              style={styles.selectInput}
-              value={editData.status_finance}
-              onChange={(e) => handleChange("status_finance", e.target.value)}
-            >
-              <option value="NS">Not Started</option>
-              <option value="IP">In Progress</option>
-              <option value="C">Completed</option>
-            </select>
-          ) : (
-            <Picker
-              selectedValue={editData.status_finance}
-              onValueChange={(value) => handleChange("status_finance", value)}
-            >
-              <Picker.Item label="Not Started" value="NS" />
-              <Picker.Item label="In Progress" value="IP" />
-              <Picker.Item label="Completed" value="C" />
-            </Picker>
-          )}
+          <Picker
+            selectedValue={editData.status_finance}
+            onValueChange={(value) => handleChange("status_finance", value)}
+          >
+            <Picker.Item label="Not Started" value="NS" />
+            <Picker.Item label="In Progress" value="IP" />
+            <Picker.Item label="Completed" value="C" />
+          </Picker>
           <TextInput
             style={styles.input}
             placeholder="Finance Note"
@@ -446,26 +382,14 @@ export default function EditFormPage({ navigation, route }) {
       {role === "admin" && office === "VPA" && (
         <>
           <Text style={styles.statusLabel}>Status VPA:</Text>
-          {Platform.OS === "web" ? (
-            <select
-              style={styles.selectInput}
-              value={editData.status_vpa}
-              onChange={(e) => handleChange("status_vpa", e.target.value)}
-            >
-              <option value="NS">Not Started</option>
-              <option value="IP">In Progress</option>
-              <option value="C">Completed</option>
-            </select>
-          ) : (
-            <Picker
-              selectedValue={editData.status_vpa}
-              onValueChange={(value) => handleChange("status_vpa", value)}
-            >
-              <Picker.Item label="Not Started" value="NS" />
-              <Picker.Item label="In Progress" value="IP" />
-              <Picker.Item label="Completed" value="C" />
-            </Picker>
-          )}
+          <Picker
+            selectedValue={editData.status_vpa}
+            onValueChange={(value) => handleChange("status_vpa", value)}
+          >
+            <Picker.Item label="Not Started" value="NS" />
+            <Picker.Item label="In Progress" value="IP" />
+            <Picker.Item label="Completed" value="C" />
+          </Picker>
           <TextInput
             style={styles.input}
             placeholder="VPA Note"

@@ -10,11 +10,13 @@ import {
   Pressable,
   TouchableOpacity,
   ScrollView,
+  Alert,
 } from "react-native";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect } from "react";
 import * as DocumentPicker from "expo-document-picker";
+import { Picker } from "@react-native-picker/picker";
 
 // --- GLASS THEME COLORS ---
 const GLASS_THEME = {
@@ -91,25 +93,11 @@ export default function AddForm({ navigation }) {
     setFormData({ ...formData, [field]: value });
   };
 
-  const handleWebFileChange = (event) => {
-    setErrorMessage("");
-
-    const files = event.target.files;
-
-    if (files.length > 0) {
-      const file = files[0];
-
-      setFormData({ ...formData, attach_document: file });
-      setFileName(file.name);
-    } else {
-      setFormData({ ...formData, attach_document: null });
-      setFileName("");
-    }
-  };
+  // Using DocumentPicker for all platforms (expo supports web too).
 
   const handleMobilePickDocument = async () => {
     setErrorMessage("");
-    try {
+  try {
       const result = await DocumentPicker.getDocumentAsync({
         type: "*/*",
         copyToCacheDirectory: true,
@@ -182,7 +170,7 @@ export default function AddForm({ navigation }) {
         }
       );
 
-      window.alert("Form and file submitted successfully!");
+      Alert.alert("Success", "Form and file submitted successfully!");
       navigation.goBack();
     } catch (err) {
       console.error(
@@ -211,18 +199,13 @@ export default function AddForm({ navigation }) {
           <Text style={{ fontWeight: "bold", marginBottom: 5 }}>
             Select Organization:
           </Text>
-          <select
-            style={styles.webSelect}
+          {/* Simple TextInput replacement for web select to remain Snack-compatible. */}
+          <TextInput
+            style={styles.input}
+            placeholder="Organization"
             value={formData.organization}
-            onChange={(e) => handleChange("organization", e.target.value)}
-          >
-            <option value="">Select Organization</option>
-            {ORGANIZATION_CHOICES.map((orgName) => (
-              <option key={orgName} value={orgName}>
-                {orgName}
-              </option>
-            ))}
-          </select>
+            onChangeText={(text) => handleChange("organization", text)}
+          />
         </>
       ) : (
         <TextInput
@@ -250,42 +233,25 @@ export default function AddForm({ navigation }) {
       {/* Event Date Picker/Input */}
       <View style={styles.datePickerContainer}>
         <Text style={styles.datePickerLabel}>Event Date (YYYY-MM-DD):</Text>
-        {Platform.OS === "web" ? (
-          <input
-            type="date"
-            value={formData.event_date}
-            onChange={(e) => handleChange("event_date", e.target.value)}
-            style={styles.webDateInput}
-          />
-        ) : (
-          <TextInput
-            style={styles.input}
-            placeholder="e.g., 2024-12-31 (Mobile: use native picker)"
-            value={formData.event_date}
-            onChangeText={(text) => handleChange("event_date", text)}
-          />
-        )}
+        <TextInput
+          style={styles.input}
+          placeholder="Event Date (YYYY-MM-DD)"
+          value={formData.event_date}
+          onChangeText={(text) => handleChange("event_date", text)}
+        />
       </View>
 
       {/* File Picker Section */}
       <View style={styles.filePickerSection}>
-        {Platform.OS === "web" ? (
-          <View style={styles.webFileInputContainer}>
-           <Text style={styles.statusLabel}>Attach Document:</Text>
-            <input
-              type="file"
-              onChange={handleWebFileChange}
-              style={{ display: "block", padding: "10px 0" }}
-            />
-          </View>
-        ) : (
-          <View>
-            <Text style={styles.statusLabel}>Attach Document:</Text>
-            <TouchableOpacity style={[styles.button, styles.secondaryButton]} onPress={handleMobilePickDocument}>
-              <Text style={styles.buttonText}>Select Document (Mobile)</Text>
-            </TouchableOpacity>
-          </View>
-        )}
+        <View>
+          <Text style={styles.statusLabel}>Attach Document:</Text>
+          <TouchableOpacity
+            style={[styles.button, styles.secondaryButton]}
+            onPress={handleMobilePickDocument}
+          >
+            <Text style={styles.buttonText}>Select Document</Text>
+          </TouchableOpacity>
+        </View>
 
         {fileName ? (
           <Text style={styles.fileNameText}>File selected: **{fileName}**</Text>
@@ -298,15 +264,14 @@ export default function AddForm({ navigation }) {
       {role === "admin" && office === "OSA" && (
         <>
           <Text style={{ fontWeight: "bold", marginTop: 10 }}>Status OSA:</Text>
-          <select
-            style={styles.webSelect}
-            value={formData.status_osa}
-            onChange={(e) => handleChange("status_osa", e.target.value)}
+          <Picker
+            selectedValue={formData.status_osa}
+            onValueChange={(value) => handleChange("status_osa", value)}
           >
-            <option value="NS">Not Started</option>
-            <option value="IP">In Progress</option>
-            <option value="C">Completed</option>
-          </select>
+            <Picker.Item label="Not Started" value="NS" />
+            <Picker.Item label="In Progress" value="IP" />
+            <Picker.Item label="Completed" value="C" />
+          </Picker>
           <TextInput
             style={styles.input}
             placeholder="OSA Note"
@@ -320,15 +285,14 @@ export default function AddForm({ navigation }) {
           <Text style={{ fontWeight: "bold", marginTop: 10 }}>
             Status VPAA:
           </Text>
-          <select
-            style={styles.webSelect}
-            value={formData.status_vpaa}
-            onChange={(e) => handleChange("status_vpaa", e.target.value)}
+          <Picker
+            selectedValue={formData.status_vpaa}
+            onValueChange={(value) => handleChange("status_vpaa", value)}
           >
-            <option value="NS">Not Started</option>
-            <option value="IP">In Progress</option>
-            <option value="C">Completed</option>
-          </select>
+            <Picker.Item label="Not Started" value="NS" />
+            <Picker.Item label="In Progress" value="IP" />
+            <Picker.Item label="Completed" value="C" />
+          </Picker>
           <TextInput
             style={styles.input}
             placeholder="VPAA Note"
@@ -342,15 +306,14 @@ export default function AddForm({ navigation }) {
           <Text style={{ fontWeight: "bold", marginTop: 10 }}>
             Status FINANCE:
           </Text>
-          <select
-            style={styles.webSelect}
-            value={formData.status_finance}
-            onChange={(e) => handleChange("status_finance", e.target.value)}
+          <Picker
+            selectedValue={formData.status_finance}
+            onValueChange={(value) => handleChange("status_finance", value)}
           >
-            <option value="NS">Not Started</option>
-            <option value="IP">In Progress</option>
-            <option value="C">Completed</option>
-          </select>
+            <Picker.Item label="Not Started" value="NS" />
+            <Picker.Item label="In Progress" value="IP" />
+            <Picker.Item label="Completed" value="C" />
+          </Picker>
           <TextInput
             style={styles.input}
             placeholder="Finance Note"
@@ -362,15 +325,14 @@ export default function AddForm({ navigation }) {
       {role === "admin" && office === "VPA" && (
         <>
           <Text style={{ fontWeight: "bold", marginTop: 10 }}>Status VPA:</Text>
-          <select
-            style={styles.webSelect}
-            value={formData.status_vpa}
-            onChange={(e) => handleChange("status_vpa", e.target.value)}
+          <Picker
+            selectedValue={formData.status_vpa}
+            onValueChange={(value) => handleChange("status_vpa", value)}
           >
-            <option value="NS">Not Started</option>
-            <option value="IP">In Progress</option>
-            <option value="C">Completed</option>
-          </select>
+            <Picker.Item label="Not Started" value="NS" />
+            <Picker.Item label="In Progress" value="IP" />
+            <Picker.Item label="Completed" value="C" />
+          </Picker>
           <TextInput
             style={styles.input}
             placeholder="VPA Note"

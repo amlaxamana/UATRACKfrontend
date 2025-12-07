@@ -59,24 +59,14 @@ export default function Card({
       ? { color: "#9c7815ff" }
       : { color: "#158d11ff" },
   ];
-
-  const handleDownload = async (documentName) => {
+  // Open the attached document URL using React Native Linking.
+  // Avoids using DOM APIs (window/document) so this works in Expo Snack.
+  const handleDownload = async (documentUrl) => {
     try {
-      const response = await axios.get(
-        `http://127.0.0.1:8000/api/download/${documentName}/`,
-        {
-          responseType: "blob",
-        }
-      );
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", documentName);
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
+      if (!documentUrl) return;
+      await Linking.openURL(documentUrl);
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.error("Error opening document URL:", error);
     }
   };
 
@@ -103,38 +93,19 @@ export default function Card({
             <View style={styles.attachRow}>
               <Text style={styles.attachLabel}>Attached Document:</Text>
               {attachedDocument ? (
-                Platform.OS === "web" ? (
-                  <span
-                    onClick={() => handleDownload(documentName)}
-                    title={documentNameOnly}
-                    style={{
-                      color: GLASS_THEME.lightBlue,
-                      textDecoration: "underline",
-                      cursor: "pointer",
-                      fontWeight: "600",
-                      marginLeft: 6,
-                      display: "inline-block",
-                      maxWidth: 220,
-                      whiteSpace: "nowrap",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      verticalAlign: "bottom",
-                    }}
+                <Pressable
+                  onPress={() => handleDownload(attachedDocument)}
+                  style={{ marginLeft: 6 }}
+                >
+                  <Text
+                    style={styles.attachLink}
+                    accessibilityLabel={documentNameOnly}
+                    numberOfLines={1}
+                    ellipsizeMode="tail"
                   >
                     {formatDocumentName(documentNameOnly)}
-                  </span>
-                ) : (
-                  <Pressable onPress={() => Linking.openURL(attachedDocument)}>
-                    <Text
-                      style={styles.attachLink}
-                      accessibilityLabel={documentNameOnly}
-                      numberOfLines={1}
-                      ellipsizeMode="tail"
-                    >
-                      {formatDocumentName(documentNameOnly)}
-                    </Text>
-                  </Pressable>
-                )
+                  </Text>
+                </Pressable>
               ) : null}
             </View>
             <Text style={styles.cardBodyText}>
